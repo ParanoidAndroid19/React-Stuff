@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 // import power from './power.jpg';
-// import './index.css';
+import './index.css';
 
 
 //Simple profile page
@@ -229,17 +229,16 @@ class Todo extends React.Component{
   render(){
     return(
       <div>
-        <h1>List:</h1>
+        <h1 className="h1list">List</h1>
 
         {this.state.tasks.map((item) => {
           return <p key={item}>
-            <input type="checkbox"/>
+            <input type="checkbox" className="check"/>
             <label>{item}   </label>
-            <button type='button' onClick={() => this.deleteItem(item)}>delete</button>
+            <button type='button' onClick={() => this.deleteItem(item)}>Delete</button>
           </p>
         })}
 
-        <h2>Add new items</h2>
         <input type='text' onChange={this.handleChange} value={this.state.userInput}/>
         <button type='button' onClick={this.onSubmit}>Add</button>
 
