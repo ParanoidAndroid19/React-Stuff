@@ -992,3 +992,100 @@ import ReactDOM from 'react-dom';
 //     );
 //   }
 // };
+
+
+//  Passing state as a props to child component, the parent/child should re-render after a change in state by child component
+// class Sibling extends React.Component {
+//   constructor(props){
+//     super(props);
+//
+//     this.state = {
+//       count: this.props.count
+//     }
+//
+//     this.hincrement = this.hincrement.bind(this);
+//   }
+//
+//   hincrement(){
+//     this.setState(state => {
+//       const count = state.count + 100
+//
+//       return {
+//         count
+//       };
+//     });
+//   }
+//
+//   render() {
+//     return (
+//       <button onClick={this.hincrement}>{this.state.count}</button>
+//     );
+//   }
+// }
+
+
+class Child extends React.Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      count: this.props.count
+    }
+
+    this.increment = this.increment.bind(this);
+  }
+
+  increment(){
+    this.setState(state => {
+      const count = state.count + 1
+
+      return {
+        count
+      };
+    });
+  }
+
+
+  render() {
+    var handleUpdate = this.props.handleUpdate
+    return (
+      <div>
+        <button style={{fontSize: "30px"}} onClick={this.increment}>{this.state.count}</button>
+        <button style={{fontSize: "30px"}} onClick={() => handleUpdate(this.state.count)}>To update parent state</button>
+      </div>
+    );
+  }
+}
+
+
+class Parent extends React.Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      count: 0
+    }
+
+    this.handleUpdate = this.handleUpdate.bind(this)
+  }
+
+  handleUpdate(updatedCount){
+    console.log('We pass argument from Child to Parent: ' + updatedCount);
+    this.setState({
+      count: updatedCount
+    });
+  }
+
+  render() {
+    console.log(this.state.count)
+    return (
+      <div>
+        <h1>Counter</h1>
+        <Child count={this.state.count} handleUpdate={this.handleUpdate}/>
+        <h1>{this.state.count}</h1>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(<Parent />, document.getElementById('root'))
