@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './index.css';
 //This is when the component is defined in some other file.
 // import Car from './app.js';
 
@@ -1024,68 +1025,138 @@ import ReactDOM from 'react-dom';
 // }
 
 
-class Child extends React.Component {
-  constructor(props){
-    super(props);
+// Parent passing a state as a prop to Child, Child then modifies this state and passes it back to Parent so that Parent re-renders when there is a change in state
+// class Child extends React.Component {
+//   constructor(props){
+//     super(props);
+//
+//     this.state = {
+//       count: this.props.count
+//     }
+//
+//     this.increment = this.increment.bind(this);
+//   }
+//
+//   increment(){
+//     this.setState(state => {
+//       const count = state.count + 1
+//
+//       return {
+//         count
+//       };
+//     });
+//   }
+//
+//
+//   render() {
+//     var handleUpdate = this.props.handleUpdate
+//     return (
+//       <div>
+//         <button style={{fontSize: "30px"}} onClick={this.increment}>{this.state.count}</button>
+//         <button style={{fontSize: "30px"}} onClick={() => handleUpdate(this.state.count)}>To update parent state</button>
+//       </div>
+//     );
+//   }
+// }
+//
+//
+// class Parent extends React.Component {
+//   constructor(props){
+//     super(props);
+//
+//     this.state = {
+//       count: 0
+//     }
+//
+//     this.handleUpdate = this.handleUpdate.bind(this)
+//   }
+//
+//   handleUpdate(updatedCount){
+//     console.log('We pass argument from Child to Parent: ' + updatedCount);
+//     this.setState({
+//       count: updatedCount
+//     });
+//   }
+//
+//   render() {
+//     console.log(this.state.count)
+//     return (
+//       <div>
+//         <h1>Counter</h1>
+//         <Child count={this.state.count} handleUpdate={this.handleUpdate}/>
+//         <h1>{this.state.count}</h1>
+//       </div>
+//     )
+//   }
+// }
+//
+// ReactDOM.render(<Parent />, document.getElementById('root'))
 
+
+// Toggle in React
+import Switch from "react-switch";
+
+class BasicExample extends React.Component {
+  constructor() {
+    super();
     this.state = {
-      count: this.props.count
-    }
-
-    this.increment = this.increment.bind(this);
+      checked: false,
+      unit: 'C'
+    };
+    this.handleChange = this.handleChange.bind(this);
+    // this.handleUnits = this.handleUnits.bind(this);
   }
 
-  increment(){
-    this.setState(state => {
-      const count = state.count + 1
+  handleChange(checked) {
+    var deg = ''
+    if(checked === false) { deg = 'C'}
+    else { deg = 'F' }
 
-      return {
-        count
-      };
+    this.setState({ checked,
+      unit: deg
     });
-  }
 
+    console.log(checked)
+  }
+  //
+  // handleUnits() {
+  //   var deg = ''
+  //   // if(this.state.checked) { deg = 'F'}
+  //   // else { deg = 'C'}
+  //
+  //   this.state.checked ? deg = 'F' : deg = 'C'
+  //
+  //   this.setState({
+  //     unit: deg
+  //   });
+  //   console.log(this.state.checked)
+  // }
 
   render() {
-    var handleUpdate = this.props.handleUpdate
     return (
-      <div>
-        <button style={{fontSize: "30px"}} onClick={this.increment}>{this.state.count}</button>
-        <button style={{fontSize: "30px"}} onClick={() => handleUpdate(this.state.count)}>To update parent state</button>
+      <div className="example">
+        <h2>Simple usage</h2>
+        <label>
+          <span>C</span>
+          <Switch
+            onChange={this.handleChange}
+            checked={this.state.checked}
+            className="react-switch"
+          />
+          <span>F</span>
+        </label>
+        <p>The switch is <span>{this.state.checked ? 'on' : 'off'}</span>.</p>
+        <h1>{this.state.unit}</h1>
       </div>
     );
   }
 }
 
+ReactDOM.render(<BasicExample />, document.getElementById('root'))
 
-class Parent extends React.Component {
-  constructor(props){
-    super(props);
-
-    this.state = {
-      count: 0
-    }
-
-    this.handleUpdate = this.handleUpdate.bind(this)
-  }
-
-  handleUpdate(updatedCount){
-    console.log('We pass argument from Child to Parent: ' + updatedCount);
-    this.setState({
-      count: updatedCount
-    });
-  }
-
-  render() {
-    console.log(this.state.count)
-    return (
-      <div>
-        <h1>Counter</h1>
-        <Child count={this.state.count} handleUpdate={this.handleUpdate}/>
-        <h1>{this.state.count}</h1>
-      </div>
-    )
-  }
-}
-
-ReactDOM.render(<Parent />, document.getElementById('root'))
+/* styles.css */
+//
+// .react-switch {
+//   vertical-align: middle;
+//   margin-left: 4px;
+// }

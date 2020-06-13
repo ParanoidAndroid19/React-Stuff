@@ -177,74 +177,145 @@ import './index.css';
 // ReactDOM.render(<Todo />, document.getElementById('root'))
 
 
+
+// Code for without SQL database
+
+// class Todo extends React.Component{
+//   constructor(props){
+//     super(props);
+//
+//     this.state = {
+//       tasks: ["Code"],
+//       userInput: ''
+//     }
+//
+//     // this.clickHandler = this.clickHandler.bind(this)
+//     this.handleChange = this.handleChange.bind(this)
+//     this.onSubmit = this.onSubmit.bind(this)
+//     // this.deleteItem = this.deleteItem.bind(this)
+//   }
+//
+//   onSubmit(){
+//     this.setState(state => {
+//       const tasks = state.tasks.concat(state.userInput);
+//
+//       return {
+//         tasks,
+//         userInput: '',
+//       };
+//     });
+//   }
+//
+//   handleChange(event){
+//     this.setState({
+//       userInput: event.target.value
+//     })
+//   }
+//
+//   // remove(e) {
+//   //   this.setState({tasks: this.state.tasks.filter(function(task) {
+//   //       return task !== e.target.value
+//   //   })});
+//   //   // console.log(e.target.value)
+//   // }
+//
+//   deleteItem(removeItem) {
+//     this.setState(({
+//       tasks: this.state.tasks.filter(item => item !== removeItem)
+//     }))
+//     // var index = this.state.tasks.indexOf(removeItem); // Let's say it's Bob.
+//     // this.state.tasks.splice(index,1);
+//     // console.log(this.state.tasks)
+//     // alert(this.state.tasks)
+//   }
+//
+//   render(){
+//     return(
+//       <div>
+//         <h1 className="h1list">List</h1>
+//
+//         {this.state.tasks.map((item) => {
+//           return <p key={item}>
+//             <input type="checkbox" className="check"/>
+//             <label>{item}   </label>
+//             <button type='button' onClick={() => this.deleteItem(item)}>Delete</button>
+//           </p>
+//         })}
+//
+//         <input type='text' onChange={this.handleChange} value={this.state.userInput}/>
+//         <button type='button' onClick={this.onSubmit}>Add</button>
+//
+//       </div>
+//     )
+//   }
+// }
+//
+// ReactDOM.render(<Todo />, document.getElementById('root'))
+
+
+
+// Code for with sql
+
 class Todo extends React.Component{
   constructor(props){
     super(props);
 
     this.state = {
-      tasks: ["Code"],
-      userInput: ''
+      todoList: [],
+      todo_name: ''
     }
-
-    // this.clickHandler = this.clickHandler.bind(this)
-    this.handleChange = this.handleChange.bind(this)
-    this.onSubmit = this.onSubmit.bind(this)
-    // this.deleteItem = this.deleteItem.bind(this)
   }
 
-  onSubmit(){
-    this.setState(state => {
-      const tasks = state.tasks.concat(state.userInput);
-
-      return {
-        tasks,
-        userInput: '',
-      };
-    });
+  componentDidMount() {
+    this.getTodos();
   }
 
-  handleChange(event){
-    this.setState({
-      userInput: event.target.value
-    })
+  // The main part, where the connection to MySQL is made. Using node and express I have hosted data from DB on localhost:3000
+  getTodos = _ => {
+    fetch('http://localhost:3000/todos')
+      .then(response => response.json())
+      .then(response => this.setState({ todoList: response.data }))
+      .catch(err => console.error(err))
   }
 
-  // remove(e) {
-  //   this.setState({tasks: this.state.tasks.filter(function(task) {
-  //       return task !== e.target.value
-  //   })});
-  //   // console.log(e.target.value)
-  // }
-
-  deleteItem(removeItem) {
-    this.setState(({
-      tasks: this.state.tasks.filter(item => item !== removeItem)
-    }))
-    // var index = this.state.tasks.indexOf(removeItem); // Let's say it's Bob.
-    // this.state.tasks.splice(index,1);
-    // console.log(this.state.tasks)
-    // alert(this.state.tasks)
+  addTodo = _ => {
+    // const { product } = this.state;
+    fetch(`http://localhost:3000/todos/add?todo_name=${this.state.todo_name}`)
+      .then(this.getTodos)
+      .catch(err => console.error(err))
   }
+
+  deleteTodo = ( todo_id ) => {
+    fetch(`http://localhost:3000/todos/delete?todo_id=${todo_id}`)
+      .then(this.getTodos)
+      .catch(err => console.error(err))
+  }
+
+  rendertodo = ({ todo_id, todo_name }) => <p key={todo_id}>
+    <input type="checkbox" className="check"/>
+    <label>{todo_name}   </label>
+    <button type='button' onClick={() => { this.deleteTodo(todo_id) }}>Delete</button>
+  </p>
 
   render(){
     return(
       <div>
         <h1 className="h1list">List</h1>
 
-        {this.state.tasks.map((item) => {
-          return <p key={item}>
-            <input type="checkbox" className="check"/>
-            <label>{item}   </label>
-            <button type='button' onClick={() => this.deleteItem(item)}>Delete</button>
-          </p>
-        })}
+        {this.state.todoList.map(this.rendertodo)}
 
-        <input type='text' onChange={this.handleChange} value={this.state.userInput}/>
-        <button type='button' onClick={this.onSubmit}>Add</button>
+        <input
+          type='text'
+          value={this.state.todo_name}
+          onChange={e => this.setState({ todo_name: e.target.value })}
+        />
+
+        <button onClick={this.addTodo}>Add</button>
 
       </div>
     )
   }
 }
+
 
 ReactDOM.render(<Todo />, document.getElementById('root'))
